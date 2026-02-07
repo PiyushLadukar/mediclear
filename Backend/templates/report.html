@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Analyze Report | MediClear AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      background: #020617;
+      overflow: hidden;
+    }
+
+    #vanta-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+    }
+
+    .page-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(30,41,59,0.85), rgba(2,6,23,0.9));
+      z-index: -1;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 780px;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(14px);
+      border-radius: 22px;
+      padding: 38px;
+      box-shadow: 0 0 70px rgba(56,189,248,0.18);
+      animation: fadeIn 0.8s ease;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+
+    .header h2 { font-size: 25px; font-weight: 600; }
+
+    .badge {
+      background: linear-gradient(135deg, rgba(56,189,248,0.25), rgba(14,165,233,0.25));
+      color: #38bdf8;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+
+    .back-btn {
+      margin-bottom: 18px;
+      display: inline-block;
+      font-size: 13px;
+      color: #38bdf8;
+      text-decoration: none;
+    }
+
+    .subtitle { color: #cbd5f5; font-size: 14px; margin-bottom: 10px; }
+    .helper { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+
+    .upload-row {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .upload-box {
+      flex: 1;
+      background: rgba(255,255,255,0.08);
+      padding: 12px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 12px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .upload-box:hover { background: rgba(56,189,248,0.15); }
+    input[type="file"] { display: none; }
+
+    textarea {
+      width: 100%;
+      height: 165px;
+      padding: 16px;
+      border-radius: 14px;
+      border: none;
+      resize: vertical;
+      font-size: 14px;
+      outline: none;
+      transition: 0.3s ease;
+    }
+
+    textarea:focus { box-shadow: 0 0 0 2px rgba(56,189,248,0.5); }
+
+    button {
+      margin-top: 22px;
+      padding: 14px 38px;
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      border: none;
+      border-radius: 30px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      color: #020617;
+    }
+
+    .output {
+      margin-top: 32px;
+      background: rgba(34,197,94,0.15);
+      border-left: 4px solid #22c55e;
+      padding: 22px;
+      border-radius: 14px;
+      display: none;
+      position: relative;
+    }
+
+    .output h4 { color: #86efac; margin-bottom: 8px; }
+
+    .speak-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(34,197,94,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .disclaimer {
+      margin-top: 26px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="vanta-bg"></div>
+<div class="page-overlay"></div>
+
+<div class="container">
+  <a href="index.html" class="back-btn">← Back to Home</a>
+
+  <div class="header">
+    <h2>AI Report Simplifier</h2>
+    <span class="badge">AI Analysis</span>
+  </div>
+
+  <p class="subtitle">Upload or paste your medical report and let MediClear AI simplify it.</p>
+  <p class="helper">Supports blood tests, sugar, cholesterol, kidney, CBC reports.</p>
+
+  <div class="upload-row">
+    <label class="upload-box">
+      📄 Upload Report (PDF / TXT)
+      <input type="file" accept=".txt,.pdf" onchange="handleFile(event)">
+    </label>
+    <label class="upload-box">
+      🖼️ Upload Image (JPG / PNG)
+      <input type="file" accept="image/*" onchange="handleImage()">
+    </label>
+  </div>
+
+  <textarea id="reportInput" placeholder="Paste or upload medical report text here..."></textarea>
+  <button onclick="simplify()">Simplify Report</button>
+
+  <div class="output" id="outputBox">
+    <div class="speak-btn" onclick="speakResult()">🔊</div>
+    <h4>Simplified Insight</h4>
+    <p id="resultText"></p>
+  </div>
+
+  <div class="disclaimer">⚠️ Educational purpose only. Not a replacement for professional medical advice.</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+
+<script>
+VANTA.NET({
+  el: "#vanta-bg",
+  color: 0x38bdf8,
+  backgroundColor: 0x020617,
+  points: 9,
+  maxDistance: 20,
+  spacing: 18
+});
+</script>
+
+<script>
+function handleFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  if (file.type === "text/plain") {
+    const reader = new FileReader();
+    reader.onload = () => reportInput.value = reader.result;
+    reader.readAsText(file);
+  } else {
+    reportInput.value = "Uploaded medical report detected.";
+  }
+}
+
+function handleImage() {
+  reportInput.value = "Uploaded medical report image detected.";
+}
+
+async function simplify() {
+  const text = reportInput.value;
+
+  if (!text.trim()) {
+    alert("Please upload or paste a medical report.");
+    return;
+  }
+
+  try {
+    const response = await fetch("/simplify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ report: text })
+    });
+
+    const data = await response.json();
+
+    document.getElementById("outputBox").style.display = "block";
+    document.getElementById("resultText").innerText = data.result;
+
+  } catch (err) {
+    alert("Backend not reachable. Make sure Flask server is running.");
+    console.error(err);
+  }
+}
+
+function speakResult() {
+  const utterance = new SpeechSynthesisUtterance(resultText.innerText);
+  speechSynthesis.speak(utterance);
+}
+</script>
+
+</body>
+</html>
