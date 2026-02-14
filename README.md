@@ -3,9 +3,9 @@
 <!-- Explosive Header -->
 <img src="https://capsule-render.vercel.app/api?type=venom&height=300&text=MediClear%20AI&fontSize=70&color=0:667eea,50:764ba2,100:f093fb&stroke=f093fb&animation=fadeIn&fontColor=ffffff" />
 
-<h3>
+<h2>
   <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=28&duration=3000&pause=1000&color=667EEA&center=true&vCenter=true&width=600&lines=transform+Medical+Reports+to+Plain+English;AI-Powered+Health+Simplification;Your+Medical+Reports%2C+Decoded" alt="Typing SVG" />
-</h3>
+</h2>
 
 <!-- Mega Badge Array -->
 <p>
